@@ -1,4 +1,5 @@
 # Python telegram bot implementation for serverless architecture
+[Youtube explanation in Russian](https://youtu.be/DAY0HkzhW0o)
 
 This repository contains the implementation of a Telegram bot designed to run on
 a serverless architecture. 
