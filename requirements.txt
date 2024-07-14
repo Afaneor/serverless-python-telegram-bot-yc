@@ -1,0 +1,4 @@
+openai~=1.35.13
+python-telegram-bot~=21.4
+python-decouple~=3.8
+chatgpt-md-converter~=0.1.2

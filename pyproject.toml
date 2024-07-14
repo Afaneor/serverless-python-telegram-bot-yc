@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "python-serverless-bot"
+version = "0.1.0"
+description = ""
+authors = ["npavlin <np@letsnova.ru>"]
+readme = "README.md"
+packages = [{include = "python_serverless_bot"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+python-telegram-bot = "^21.4"
+openai = "^1.35.13"
+python-decouple = "^3.8"
+chatgpt-md-converter = "^0.1.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
