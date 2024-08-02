@@ -12,6 +12,10 @@ python-telegram-bot = "^21.4"
 openai = "^1.35.13"
 python-decouple = "^3.8"
 chatgpt-md-converter = "^0.1.2"
+ollama = "^0.3.1"
+redis = "^5.0.8"
+tiktoken = "^0.7.0"
+scikit-learn = "^1.5.1"
 
 
 [build-system]
