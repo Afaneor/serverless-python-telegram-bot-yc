@@ -15,6 +15,9 @@ from chatgpt_md_converter import telegram_format
 
 import logging
 
+from config import SYSTEM_PROMPT, GPT_MODEL, TELEGRAM_BOT_TOKEN, HELP_MESSAGES
+from context import generate_context, add_message
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -22,20 +25,6 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-
-
-SYSTEM_PROMPT = """
-Ты являешься ботом телеграмм канала "Павлин Шарит", ты должен помогать
-подписчикам помогать технические ворпосы, твоя задача давать подробный и 
-развернутый ответ и объяснять почему ты считаешь именно так. Ответы должны 
-содержать максимально оптимизированные решения, потому что подписчики 
-заслуживают качественно и экспертной помощи. По возможности приводи ссылки, где
-можно прочитать про это подробнее 
-"""
-ALLOWED_CHATS = []
-TELEGRAM_BOT_TOKEN = config('TELEGRAM_BOT_TOKEN')
-HELP_MESSAGES = ('gpt', )
-GPT_MODEL = config('GPT_MODEL', 'gpt-3.5-turbo')
 
 
 class TextStartsWithFilter(filters.Text):
@@ -69,7 +58,8 @@ def allow_chats(chats: List[int] | None = None):
 @allow_chats()
 async def gpt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обработчик, который отвечает на сообщение."""
-    # TODO пробрасывать контекст всех ответов по ветке сообщений
+    messages_context = generate_context(user_id=str(update.message.from_user.id),
+                                        new_message=update.message.text)
     client = OpenAI(
         api_key=config("OPENAI_API_KEY"),
     )
@@ -80,6 +70,7 @@ async def gpt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                     'role': 'system',
                     "content": SYSTEM_PROMPT,
                 },
+                *messages_context,
                 {
                     'role': 'user',
                     "content": update.message.text,
@@ -87,6 +78,9 @@ async def gpt(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             ],
             model=GPT_MODEL,
         )
+        add_message(user_id=str(update.message.from_user.id),
+                    user_content=update.message.text,
+                    assistant_content=chat_completion.choices[0].message.content)
     except Exception as e:
         logger.error(f'Error while getting completion: {e}')
         await update.message.reply_text('Возникла ошибка, попробуйте позднее')
